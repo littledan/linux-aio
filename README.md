@@ -1,3 +1,5 @@
+*Note, Linux AIO is now subsumed by the io_uring API ([tutorial](https://blogs.oracle.com/linux/an-introduction-to-the-io_uring-asynchronous-io-framework), [LWN coverage](https://lwn.net/Articles/810414/)). The below explanation is mostly useful for old kernels.*
+
 ## Introduction
 The Asynchronous Input/Output (AIO) interface allows many I/O requests to be submitted in parallel without the overhead of a thread per request. The purpose of this document is to explain how to use the Linux AIO interface, namely the function family `io_setup`, `io_submit`, `io_getevents`, `io_destroy`. Currently, the AIO interface is best for `O_DIRECT` access to a raw block device like a disk, flash drive or storage array.
 
