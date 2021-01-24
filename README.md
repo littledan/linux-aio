@@ -159,6 +159,7 @@ static const int kPageSize = 4096;
 class AIORequest {
  public:
   int* buffer_;
+  struct iocb iocb_;
 
   virtual void Complete(int res) = 0;
 
@@ -239,9 +240,9 @@ class AIOAdder : public Adder {
 
   void SubmitWrite() {
     LOG(INFO) << "Submitting a write to " << counter_;
-    struct iocb iocb;
-    struct iocb* iocbs = &iocb;
     AIORequest *req = new AIOWriteRequest(counter_);
+    struct iocb& iocb = req->iocb_;
+    struct iocb* iocbs = &iocb;
     io_prep_pwrite(&iocb, fd_, req->buffer_, kPageSize, counter_ * kPageSize);
     iocb.data = req;
     int res = io_submit(ioctx_, 1, &iocbs);
@@ -259,9 +260,9 @@ class AIOAdder : public Adder {
 
   void SubmitRead() {
     LOG(INFO) << "Submitting a read from " << counter_;
-    struct iocb iocb;
-    struct iocb* iocbs = &iocb;
     AIORequest *req = new AIOReadRequest(this);
+    struct iocb& iocb = req->iocb_;
+    struct iocb* iocbs = &iocb;
     io_prep_pread(&iocb, fd_, req->buffer_, kPageSize, counter_ * kPageSize);
     iocb.data = req;
     int res = io_submit(ioctx_, 1, &iocbs);
